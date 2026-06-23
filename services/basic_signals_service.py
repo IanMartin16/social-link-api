@@ -5,7 +5,7 @@ from adapters.coingecko_adapter import map_trending_to_basic_signals
 from adapters.alternative_adapter import map_fear_greed_to_backdrop
 
 
-async def get_basic_signals(window: str = "1h", assets: list[str] | None = None, limit: int = 3):
+async def get_basic_signals(window: str = "1h", assets: list[str] | None = None, limit: int = 5):
     trending = await fetch_trending()
 
     result = map_trending_to_basic_signals(

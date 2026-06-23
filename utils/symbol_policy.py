@@ -7,7 +7,7 @@ ALLOWED_SOCIAL_ASSETS = {
   "APT", "ALGO", "XTZ", "EGLD", "FET", "RENDER", "ETHFI", "GRT", "JUP", "PYTH",
 }
 
-FALLBACK_ASSETS = ["BTC", "ETH", "SOL"]
+FALLBACK_ASSETS = ["BTC", "ETH", "BNB", "USDT", "USDC"]
 
 NARRATIVE_TAGS = {
     "majors-led",

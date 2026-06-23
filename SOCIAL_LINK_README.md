@@ -69,9 +69,9 @@ adapters reduce it to internal models, services hold the logic, routes expose it
 
 ```bash
 # create / activate a virtual environment (recommended)
-# python -m venv venv
-# venv\Scripts\activate          # Windows
-# source venv/bin/activate     # macOS/Linux sin ambiente virtual
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS/Linux
 
 pip install -r requirements.txt
 
@@ -109,7 +109,11 @@ curl "http://localhost:8080/internal/v1/symbols?symbols=BTC,ETH,SOL&fiat=USD"
 
 ## History
 
-- `/internal/v1/trends` existed as an early MVP placeholder (mock data); removed.
-  The portal's real trends come from the CryptoLink API's `/v1/trends`.
+- `/internal/v1/trends` — **kept, NOT obsolete.** Originally thought to be a dead MVP
+  placeholder, but removing it broke Market 360° in the portal (symbols stopped
+  rendering despite 200s — likely a shared/parallel fetch where the trends 404
+  poisoned the result set). Restored as a temporary fix. Acoplamiento with the front
+  under investigation: either confirm it as required, or decouple the front so it can
+  be retired cleanly. Do NOT remove until the coupling is understood.
 - Repo separated from the crypto monorepo (was: branch `monorepov2`, root
   `/services/social-link`). Now standalone.

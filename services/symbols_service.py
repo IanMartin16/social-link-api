@@ -1,5 +1,6 @@
 # services/symbols_service.py
 
+import logging
 from datetime import datetime, timezone
 
 from clients.coingecko_client import fetch_markets
@@ -7,6 +8,8 @@ from adapters.coingecko_adapter import map_markets_to_symbols
 from utils.symbol_ids import resolve_ids
 from utils.symbol_policy import FALLBACK_ASSETS
 from models.symbols import SymbolsResponse, SymbolMarket
+
+logger = logging.getLogger("social-link.symbols")
 
 
 async def get_symbols_360(
@@ -19,6 +22,10 @@ async def get_symbols_360(
     - Resuelve symbol -> coingecko_id (dict espejo de cryptolink_symbols).
     - Una sola llamada a /coins/markets con ids=.
     - Robusto: símbolos sin id o sin datos en CoinGecko van a `missing`.
+
+    Observabilidad: las dos rutas de degradación (sin ids resueltos / fallo de
+    CoinGecko) ahora LOGUEAN antes de degradar. Antes devolvían 200 vacío en
+    silencio, lo que ocultaba la causa real (timeout, 429, parsing, etc.).
     """
     requested = symbols if symbols else list(FALLBACK_ASSETS)
 
@@ -29,6 +36,14 @@ async def get_symbols_360(
 
     if not resolved:
         # nada que pedir: devolvemos vacío honesto, no rompemos
+        # LOG: si esto pasa con símbolos comunes (BTC/ETH), el resolver tiene un
+        # problema (symbol_ids desincronizado, símbolo nuevo no mapeado, etc.)
+        logger.warning(
+            "symbols_360: no resolved ids for requested=%s (missing=%s). "
+            "Returning empty. Check symbol_ids resolver.",
+            requested,
+            missing,
+        )
         return SymbolsResponse(
             ok=True,
             source="social-link-coingecko-markets-v1",
@@ -42,8 +57,19 @@ async def get_symbols_360(
     vs = fiat.lower()
     try:
         raw = await fetch_markets(ids=list(resolved.values()), vs_currency=vs)
-    except Exception:
+    except Exception as e:
         # si CoinGecko falla, devolvemos vacío + todos como missing (degradación)
+        # LOG: este era el punto ciego. Cualquier fallo (timeout, 429, red,
+        # parsing) caía aquí y devolvía 200 vacío SIN rastro. Ahora se registra
+        # el error real con stack trace para diagnóstico en Railway logs.
+        logger.error(
+            "symbols_360: fetch_markets FAILED for ids=%s vs=%s -> %r. "
+            "Degrading to empty + all missing.",
+            list(resolved.values()),
+            vs,
+            e,
+            exc_info=True,
+        )
         return SymbolsResponse(
             ok=True,
             source="social-link-coingecko-markets-v1",
@@ -62,6 +88,14 @@ async def get_symbols_360(
     for sym in resolved.keys():
         if sym not in returned_syms:
             missing.append(sym)
+
+    # LOG suave: si hubo símbolos resueltos que CoinGecko no devolvió, dejar rastro
+    if missing:
+        logger.info(
+            "symbols_360: ok with partial missing=%s (returned=%d)",
+            missing,
+            len(mapped),
+        )
 
     return SymbolsResponse(
         ok=True,

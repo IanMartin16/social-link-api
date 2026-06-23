@@ -20,6 +20,13 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"ok": True}
+
+@app.get("/internal/v1/trends")
+def trends(symbols: str = Query(default="BTC,ETH")):
+    syms = [s.strip().upper() for s in symbols.split(",") if s.strip()]
+    now = datetime.now(timezone.utc).isoformat()
+    data = [{"symbol": s, "trend": "up", "score": 0.72, "reason": "mvp: placeholder"} for s in syms]
+    return {"ts": now, "data": data}
     
 @app.get("/internal/v1/basic-signals")
 async def basic_signals(

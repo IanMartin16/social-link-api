@@ -66,7 +66,7 @@ COINGECKO_IDS: dict[str, str] = {
     "USDS": "usds",
     "USD1": "usd1-wlfi",
     "QNT": "quant-network",
-    "XAUt": "tether-gold",
+    "XAUT": "tether-gold",
     "M": "memecore",
     "DEXE": "dexe",
     "ASTER": "aster-2",

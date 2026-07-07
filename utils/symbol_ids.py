@@ -100,7 +100,9 @@ COINGECKO_IDS: dict[str, str] = {
     "GT": "gatechain-token",
     "BUIDL": "blackrock-usd-institutional-digital-liquidity-fund",
     "NIGHT": "midnight-3",
-    "BDX": "beldex"
+    "BDX": "beldex",
+    "USYC": "hashnote-usyc",
+    "BANANA": "banana-chain"
 }
 
 

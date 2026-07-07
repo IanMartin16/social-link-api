@@ -9,6 +9,7 @@ ALLOWED_SOCIAL_ASSETS = {
   "USDD", "WLD", "BGB", "ETC", "MORPHO", "U", "KCS", "BEAT", "KAS", "STABLE",
   "FIGR_HELOC", "RAIN", "WBT", "AWETH", "JST", "USDY", "LAB", "HTX", "USDF", "BFUSD",
   "EUTBL", "BCAP", "USDGO", "NEXO", "ENA", "ADI", "GT", "BUIDL", "NIGHT", "BDX",
+  "BANANA", "USYC",
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC"]

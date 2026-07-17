@@ -2,7 +2,7 @@ from fastapi import FastAPI, Query
 from datetime import datetime, timezone
 from fastapi.middleware.cors import CORSMiddleware
 from services.basic_signals_service import get_basic_signals
-from services.symbols_service import get_symbols_360
+from services.symbols_service import get_symbols_360, get_symbols_top
 
 app = FastAPI(title="social-link", version="0.1.0")
 
@@ -35,7 +35,11 @@ async def basic_signals(
 async def symbols(
     symbols: str | None = Query(default=None),
     fiat: str = Query(default="USD"),
+    top: int | None = Query(default=None),   # nuevo
 ):
+    if top:
+        return await get_symbols_top(fiat=fiat, top=top)
+
     symbol_list = (
         [s.strip().upper() for s in symbols.split(",") if s.strip()]
         if symbols

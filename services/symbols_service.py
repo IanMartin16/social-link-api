@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime, timezone
 
-from clients.coingecko_client import fetch_markets
+from clients.coingecko_client import fetch_markets, fetch_top_markets
 from adapters.coingecko_adapter import map_markets_to_symbols
 from utils.symbol_ids import resolve_ids
 from utils.symbol_policy import FALLBACK_ASSETS
@@ -104,4 +104,42 @@ async def get_symbols_360(
         fiat=fiat.upper(),
         symbols=mapped,
         missing=missing,
+    )
+
+async def get_symbols_top(fiat: str = "USD", top: int = 50) -> SymbolsResponse:
+    """Top N del mercado por market cap (Market 360° dinámico).
+
+    No resuelve símbolos ni usa symbol_ids: le pide a CoinGecko su top directo.
+    Por eso `missing` siempre va vacío: no se pide nada que pueda no existir.
+    Se elimina el mantenimiento manual de la lista de símbolos.
+    """
+    ts = datetime.now(timezone.utc).isoformat()
+    vs = fiat.lower()
+
+    try:
+        raw = await fetch_top_markets(vs_currency=vs, per_page=top)
+    except Exception as e:
+        # misma degradación honesta que get_symbols_360, con log (no silencioso)
+        logger.error(
+            "symbols_top: fetch_top_markets FAILED vs=%s top=%s -> %r. Returning empty.",
+            vs, top, e, exc_info=True,
+        )
+        return SymbolsResponse(
+            ok=True,
+            source="social-link-coingecko-markets-top-v1",
+            ts=ts,
+            fiat=fiat.upper(),
+            symbols=[],
+            missing=[],
+        )
+
+    mapped: list[SymbolMarket] = map_markets_to_symbols(raw)
+
+    return SymbolsResponse(
+        ok=True,
+        source="social-link-coingecko-markets-top-v1",
+        ts=ts,
+        fiat=fiat.upper(),
+        symbols=mapped,
+        missing=[],   # por diseño: en modo top no hay missing posible
     )

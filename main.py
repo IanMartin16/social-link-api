@@ -3,8 +3,10 @@ from datetime import datetime, timezone
 from fastapi.middleware.cors import CORSMiddleware
 from services.basic_signals_service import get_basic_signals
 from services.symbols_service import get_symbols_360, get_symbols_top
+from api.health import router as health_router
 
 app = FastAPI(title="social-link", version="0.1.0")
+app.include_router(health_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,9 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health")
-def health():
-    return {"ok": True}
     
 @app.get("/internal/v1/basic-signals")
 async def basic_signals(

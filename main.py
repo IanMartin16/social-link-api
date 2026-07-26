@@ -24,7 +24,7 @@ app.add_middleware(
 async def basic_signals(
     window: str = Query(default="1h"),
     assets: str | None = Query(default=None),
-    limit: int = Query(default=10),
+    limit: int = Query(default=15),
 ):
     asset_list = [s.strip().upper() for s in assets.split(",")] if assets else None
     result = await get_basic_signals(window=window, assets=asset_list, limit=limit)

@@ -35,7 +35,7 @@ router = APIRouter()
 async def basic_signals(
     window: str = Query("1h"),
     assets: str | None = Query(None),
-    limit: int = Query(5, ge=1, le=10),
+    limit: int = Query(5, ge=1, le=15),
 ):
     asset_list = [x.strip().upper() for x in assets.split(",")] if assets else None
     return await get_basic_signals(window=window, assets=asset_list, limit=limit)

@@ -97,7 +97,7 @@ def ensure_minimum_leaders(leaders: list[SocialAttentionItem]) -> list[SocialAtt
             )
         )
 
-    return (leaders + fillers)[:10]
+    return (leaders + fillers)[:15]
 
 
 def map_trending_to_basic_signals(trending: dict, window: str = "1h", ts: str = "", assets_filter: list[str] | None = None, limit: int = 3):
@@ -126,7 +126,7 @@ def map_trending_to_basic_signals(trending: dict, window: str = "1h", ts: str = 
         )
 
     leaders = ensure_minimum_leaders(leaders)[: max(limit, 3)]
-    top_assets = [x.asset for x in leaders[:10]]
+    top_assets = [x.asset for x in leaders[:15]]
 
     raw_tags = []
     for leader in leaders:

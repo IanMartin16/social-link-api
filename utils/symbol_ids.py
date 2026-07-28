@@ -102,7 +102,25 @@ COINGECKO_IDS: dict[str, str] = {
     "NIGHT": "midnight-3",
     "BDX": "beldex",
     "USYC": "hashnote-usyc",
-    "BANANA": "banana-chain"
+    "USD0": "usual-usd",
+    "A7A5": "a7a5",
+    "TUSD": "true-usd",
+    "HASH": "hash-2",
+    "USX": "usx",
+    "PUMP": "pump-fun",
+    "JAAA": "janus-henderson-anemoy-aaa-clo-fund",
+    "GHO": "gho",
+    "VVV": "venice-token",
+    "YLDS": "ylds",
+    "FIL": "filecoin",
+    "EURSAFO": "spiko-amundi-overnight-swap-fund-eur",
+    "币安人生": "bianrensheng",
+    "XDC": "xdce-crowd-sale",
+    "PENGU": "pudgy-penguins",
+    "TRUMP": "official-trump",
+    "ZAMA": "zama",
+    "USTB": "superstate-short-duration-us-government-securities-fund-ustb",
+    "JTRSY": "janus-henderson-anemoy-treasury-fund",
 }
 
 

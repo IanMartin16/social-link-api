@@ -9,7 +9,8 @@ ALLOWED_SOCIAL_ASSETS = {
   "USDD", "WLD", "BGB", "ETC", "MORPHO", "U", "KCS", "BEAT", "KAS", "STABLE",
   "FIGR_HELOC", "RAIN", "WBT", "AWETH", "JST", "USDY", "LAB", "HTX", "USDF", "BFUSD",
   "EUTBL", "BCAP", "USDGO", "NEXO", "ENA", "ADI", "GT", "BUIDL", "NIGHT", "BDX",
-  "BANANA", "USYC",
+  "BANANA", "USYC", "A7A5", "TUSD", "HASH", "USX", "USD0", "FIL", "YLDS", "VVV",
+  "GHO", "JAAA", "PUMP", "USTB", "JTRSY", "EURSAFO", "ICP",
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "HYPE"]

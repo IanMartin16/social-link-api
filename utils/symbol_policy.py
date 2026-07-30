@@ -11,6 +11,9 @@ ALLOWED_SOCIAL_ASSETS = {
   "EUTBL", "BCAP", "USDGO", "NEXO", "ENA", "ADI", "GT", "BUIDL", "NIGHT", "BDX",
   "USYC", "A7A5", "TUSD", "HASH", "USX", "USD0", "FIL", "YLDS", "VVV", "PENGU",
   "GHO", "JAAA", "PUMP", "USTB", "JTRSY", "EURSAFO", "ZAMA", "TRUMP", "XDC", "币安人生",
+  "FLR", "EURC", "PANCAKE", "AERO", "DASH", "SEI", "VIRTUAL", "SUN", "CRV", "FDUSD",
+  "SPX", "TIA", "ZRO", "KAITO", "LDO", "GNO", "LUNC", "JTO", "NFT", "BONK",
+  "BTT", "BSV", "MON", "STX", "PENDLE", "CFX", "IMX", "JASMY", "DCR", "XPL",
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "HYPE"]

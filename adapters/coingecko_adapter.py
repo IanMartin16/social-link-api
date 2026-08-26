@@ -138,6 +138,36 @@ def map_trending_to_basic_signals(trending: dict, window: str = "1h", ts: str = 
 
     coverage = derive_coverage(top_assets, tags)
 
+    LOSER_THRESHOLD = -3.0  # % 24h; calibrar observando (empezar conservador)
+
+    losers: list[SocialAttentionItem] = []
+    for index, entry in enumerate(raw_coins):
+        item = entry.get("item", {})
+        asset = normalize_symbol(item.get("symbol"))
+        if not asset or asset not in allowed:
+            continue
+    # no duplicar los que ya son leaders
+        if any(l.asset == asset for l in leaders):
+        # un asset puede ser leader Y caer; decide política:
+        # aquí lo dejamos SOLO como leader para no duplicar. Ajustable.
+            continue
+
+        change = (((item.get("data") or {}).get("price_change_percentage_24h") or {}).get("usd"))
+        delta = attention_delta_from_price_change(change, index)
+
+        if delta <= LOSER_THRESHOLD:
+            losers.append(
+                SocialAttentionItem(
+                    asset=asset,
+                    attentionScore=attention_score_from_rank(item.get("market_cap_rank"), index),
+                    attentionDeltaPct=delta,
+                    direction="down",
+                    tags=infer_tags(asset, item.get("name")),
+                )
+            )
+    losers.sort(key=lambda x: x.attentionDeltaPct)
+    losers = losers[:5]
+
     return SocialLinkBasicSignalsResponse(
         ok=True,
         source="social-link-coingecko-v1",
@@ -146,7 +176,7 @@ def map_trending_to_basic_signals(trending: dict, window: str = "1h", ts: str = 
         market=BasicSignalsMarket(
             topAssets=top_assets,
             attentionLeaders=leaders,
-            attentionLosers=[],
+            attentionLosers=losers,
             tags=tags,
             coverage=coverage,
         ),

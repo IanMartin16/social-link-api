@@ -13,3 +13,7 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.40.0
 httpx==0.28.1
+asyncpg>=0.30
+apscheduler>=3.10
+sqlalchemy>=2.0
+alembic>=1.13

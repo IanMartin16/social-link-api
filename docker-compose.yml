@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16          # usa la misma major que Railway (verifica cuál)
+    container_name: social_link_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: social_link
+      POSTGRES_PASSWORD: local_dev_pw   # solo local, no es secreto real
+      POSTGRES_DB: social_link
+    ports:
+      - "5432:5432"             # expone al host para que uvicorn/Alembic conecten
+    volumes:
+      - social_link_pgdata:/var/lib/postgresql/data   # persiste entre reinicios
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U social_link"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  social_link_pgdata:

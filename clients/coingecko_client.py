@@ -44,7 +44,7 @@ async def _fetch_markets_raw(ids: list[str], vs_currency: str = "usd") -> list[d
 
 
 async def _fetch_top_markets_raw(vs_currency: str = "usd", per_page: int = 50) -> list[dict]:
-    await asyncio.sleep(30) 
+    # await asyncio.sleep(30) 
     params = {
         "vs_currency": vs_currency,
         "order": "market_cap_desc",

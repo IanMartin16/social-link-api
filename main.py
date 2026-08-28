@@ -29,7 +29,7 @@ async def lifespan(app):
     print("[scheduler] persistence job scheduled every 10 min")
 
     # opcional: una captura al arrancar para no esperar 10 min al primer dato
-    await persist_snapshot()
+    #await persist_snapshot()
 
     yield
 

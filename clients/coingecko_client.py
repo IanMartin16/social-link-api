@@ -1,9 +1,20 @@
 import httpx
+from utils.cache import cache
 
 COINGECKO_TRENDING_URL = "https://api.coingecko.com/api/v3/search/trending"
+COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
+
+# TTLs por endpoint (segundos). Ajustables:
+#  - markets/top: el portal los muestra "en vivo"; 60s equilibra frescura y carga.
+#  - trending: cambia lento (ventana de horas); 300s sobra.
+TTL_MARKETS = 60
+TTL_TOP = 60
+TTL_TRENDING = 300
 
 
-async def fetch_trending():
+# ----------------- llamadas REALES (sin caché) -----------------
+
+async def _fetch_trending_raw():
     async with httpx.AsyncClient(timeout=12.0) as client:
         res = await client.get(
             COINGECKO_TRENDING_URL,
@@ -11,66 +22,71 @@ async def fetch_trending():
         )
         res.raise_for_status()
         return res.json()
-    
-COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 
 
-async def fetch_markets(ids: list[str], vs_currency: str = "usd") -> list[dict]:
-    """Trae datos ricos de mercado para los ids dados, en UNA sola llamada.
-
-    ids: lista de coingecko_id ya resueltos (ej. ["bitcoin", "ether-fi"]).
-    Devuelve la lista cruda de CoinGecko (un dict por moneda).
-    """
+async def _fetch_markets_raw(ids: list[str], vs_currency: str = "usd") -> list[dict]:
     if not ids:
         return []
-
     params = {
         "vs_currency": vs_currency,
         "ids": ",".join(ids),
-        # orden estable; el front reordena si quiere
         "order": "market_cap_desc",
         "per_page": 250,
         "page": 1,
         "sparkline": "false",
         "price_change_percentage": "24h",
     }
-
     async with httpx.AsyncClient(timeout=12.0) as client:
-        res = await client.get(
-            COINGECKO_MARKETS_URL,
-            params=params,
-            headers={"accept": "application/json"},
-        )
+        res = await client.get(COINGECKO_MARKETS_URL, params=params,
+                               headers={"accept": "application/json"})
         res.raise_for_status()
         return res.json()
 
-async def fetch_top_markets(vs_currency: str = "usd", per_page: int = 50) -> list[dict]:
-    """Trae el TOP N del mercado por market cap, en UNA sola llamada.
 
-    A diferencia de fetch_markets(ids=...), aquí NO se pasan ids: se le pide a
-    CoinGecko su top por market cap directamente. Consecuencias:
-      - No hay que resolver symbol -> coingecko_id (no usa symbol_ids).
-      - No hay `missing` posible: nunca pedimos algo que no exista.
-      - Se actualiza solo: si una moneda entra o sale del top, se refleja.
-      - Sigue siendo 1 sola llamada (mismo costo que pedir 2 símbolos).
-
-    Devuelve la lista cruda de CoinGecko (un dict por moneda), mismo shape que
-    fetch_markets -> el adapter map_markets_to_symbols NO cambia.
-    """
+async def _fetch_top_markets_raw(vs_currency: str = "usd", per_page: int = 50) -> list[dict]:
     params = {
         "vs_currency": vs_currency,
         "order": "market_cap_desc",
-        "per_page": per_page,   # top N por market cap
+        "per_page": per_page,
         "page": 1,
         "sparkline": "false",
         "price_change_percentage": "24h",
     }
-
     async with httpx.AsyncClient(timeout=12.0) as client:
-        res = await client.get(
-            COINGECKO_MARKETS_URL,
-            params=params,
-            headers={"accept": "application/json"},
-        )
+        res = await client.get(COINGECKO_MARKETS_URL, params=params,
+                               headers={"accept": "application/json"})
         res.raise_for_status()
         return res.json()
+
+
+# ----------------- API PÚBLICA (cacheada) -----------------
+
+async def fetch_trending():
+    return await cache.get_or_fetch(
+        key="trending:usd",
+        fetch_fn=_fetch_trending_raw,
+        ttl_seconds=TTL_TRENDING,
+    )
+
+
+async def fetch_markets(ids: list[str], vs_currency: str = "usd") -> list[dict]:
+    if not ids:
+        return []
+    # clave estable: mismos ids en cualquier orden -> misma clave (evita
+    # cachés separados por reordenamiento). El vs_currency entra en la clave.
+    ids_key = ",".join(sorted(i.lower() for i in ids))
+    key = f"markets:ids:{vs_currency.lower()}:{ids_key}"
+    return await cache.get_or_fetch(
+        key=key,
+        fetch_fn=lambda: _fetch_markets_raw(ids, vs_currency),
+        ttl_seconds=TTL_MARKETS,
+    )
+
+
+async def fetch_top_markets(vs_currency: str = "usd", per_page: int = 50) -> list[dict]:
+    key = f"markets:top:{per_page}:{vs_currency.lower()}"
+    return await cache.get_or_fetch(
+        key=key,
+        fetch_fn=lambda: _fetch_top_markets_raw(vs_currency, per_page),
+        ttl_seconds=TTL_TOP,
+    )

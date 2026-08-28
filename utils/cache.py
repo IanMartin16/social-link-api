@@ -1,30 +1,49 @@
-"""
-Caché simple en memoria con TTL para social_link.
-
-Motivación: hoy cada fetch_* pega directo a CoinGecko sin caché → N requests del
-portal = N llamadas (mismo patrón N×N que se peleó en el hardening del Java/Vercel).
-Este caché:
-  - Reduce las llamadas del portal (una llamada por TTL sirve a todos los visitantes).
-  - Permite que el JOB de persistencia lea del MISMO caché → cero llamadas extra.
-
-No necesita Redis: un dict en memoria basta (como el PriceCache del Java). Si algún
-día social_link escala a múltiples instancias, se migra a Redis compartido.
-"""
-
 import time
-from typing import Any, Callable, Awaitable
 import asyncio
+import logging
+from typing import Any, Callable, Awaitable
+
+logger = logging.getLogger("social-link.cache")
+
+# timeout duro para CUALQUIER llamada a la fuente. Aunque httpx tenga su propio
+# timeout, esto es el cinturón de seguridad a nivel del caché.
+FETCH_TIMEOUT = 10.0
 
 
 class TTLCache:
     def __init__(self):
-        self._store: dict[str, tuple[float, Any]] = {}
+        # value, expires_at (fresco hasta aquí)
+        self._store: dict[str, tuple[Any, float]] = {}
         self._locks: dict[str, asyncio.Lock] = {}
+        # claves que tienen un refresco en background corriendo (evita lanzar N)
+        self._refreshing: set[str] = set()
 
     def _lock_for(self, key: str) -> asyncio.Lock:
         if key not in self._locks:
             self._locks[key] = asyncio.Lock()
         return self._locks[key]
+
+    async def _do_fetch(self, key: str, fetch_fn: Callable[[], Awaitable[Any]], ttl_seconds: float) -> Any:
+        """Llama a la fuente con timeout duro y guarda en caché. Devuelve el valor.
+        Lanza si falla o si excede el timeout (el llamador decide qué hacer)."""
+        value = await asyncio.wait_for(fetch_fn(), timeout=FETCH_TIMEOUT)
+        self._store[key] = (value, time.monotonic() + ttl_seconds)
+        return value
+
+    async def _refresh_in_background(self, key, fetch_fn, ttl_seconds):
+        """Refresco fuera del camino de la petición. Un solo refresco por clave."""
+        if key in self._refreshing:
+            return
+        self._refreshing.add(key)
+        try:
+            async with self._lock_for(key):
+                try:
+                    await self._do_fetch(key, fetch_fn, ttl_seconds)
+                except Exception as e:
+                    # si el refresco falla, conservamos el dato viejo (no lo borramos)
+                    logger.warning("cache refresh failed key=%s: %r", key, e)
+        finally:
+            self._refreshing.discard(key)
 
     async def get_or_fetch(
         self,
@@ -32,41 +51,38 @@ class TTLCache:
         fetch_fn: Callable[[], Awaitable[Any]],
         ttl_seconds: float,
     ) -> Any:
-        """Devuelve el valor cacheado si está fresco; si no, llama fetch_fn una vez.
-
-        El lock por clave evita que múltiples requests concurrentes disparen
-        llamadas simultáneas a CoinGecko para la misma clave (stampede).
-        """
         now = time.monotonic()
         cached = self._store.get(key)
+
+        # 1) HAY dato en caché
         if cached is not None:
-            expires_at, value = cached
+            value, expires_at = cached
             if now < expires_at:
+                # fresco -> servir directo
                 return value
-
-        # dato viejo o ausente → una sola llamada protegida por lock
-        async with self._lock_for(key):
-            # re-chequeo: otro request pudo haber refrescado mientras esperábamos
-            now = time.monotonic()
-            cached = self._store.get(key)
-            if cached is not None:
-                expires_at, value = cached
-                if now < expires_at:
-                    return value
-
-            value = await fetch_fn()
-            self._store[key] = (now + ttl_seconds, value)
+            # viejo -> STALE-WHILE-REVALIDATE: servir viejo YA, refrescar en background
+            asyncio.create_task(self._refresh_in_background(key, fetch_fn, ttl_seconds))
             return value
 
+        # 2) NO hay dato (arranque frío para esta clave): sí hay que esperar,
+        #    pero con lock (colapsa concurrentes) y timeout duro (no cuelga).
+        async with self._lock_for(key):
+            # re-chequeo: otro pudo haber llenado mientras esperábamos el lock
+            cached = self._store.get(key)
+            if cached is not None:
+                value, expires_at = cached
+                if time.monotonic() < expires_at:
+                    return value
+            # llamada real con timeout duro; si falla, propaga (el servicio
+            # ya degrada a vacío con log, como hoy)
+            return await self._do_fetch(key, fetch_fn, ttl_seconds)
+
     def peek(self, key: str) -> Any | None:
-        """Devuelve el valor cacheado SIN llamar a la fuente (aunque esté viejo).
-        Útil para el job: si hay algo, lo persiste; nunca dispara una llamada."""
         cached = self._store.get(key)
         if cached is None:
             return None
-        _, value = cached
+        value, _ = cached
         return value
 
 
-# instancia global compartida por el proceso (portal + job leen de aquí)
 cache = TTLCache()

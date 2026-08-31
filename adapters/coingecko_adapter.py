@@ -56,14 +56,20 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     n = (name or "").lower()
     tags: list[str] = []
 
-    if s in {"BTC", "ETH"}:
+    if s in {"BTC", "ETH", "SOL", "BNB", "XRP"}:
         tags.append("majors-led")
-    if s in {"SOL", "ADA", "AVAX", "ATOM", "NEAR"}:
+    if s in {"SOL", "ADA", "AVAX", "ATOM", "NEAR", "HYPE", "BNB","TRX"}:
         tags.append("layer1")
     if s in {"DOGE", "SHIB", "PEPE", "FLOKI", "PENGU"}:
         tags.append("meme")
-    if s in {"LINK", "UNI", "AAVE", "MKR"}:
+    if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP"}:
         tags.append("defi")
+    if s in {"ENA", "USDT","USDC"}:
+        tags.append("stablecoin")
+    if s in {"XRP"}:
+        tags.append("payments")    
+    if s in {"ETH"}:
+        tags.append("smart-contracts")        
     if "bitcoin" in n:
         tags.append("store-of-value")
     if "ethereum" in n:

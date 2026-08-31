@@ -58,23 +58,42 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
 
     if s in {"BTC", "ETH", "SOL", "BNB", "XRP"}:
         tags.append("majors-led")
-    if s in {"SOL", "ADA", "AVAX", "ATOM", "NEAR", "HYPE", "BNB","TRX"}:
+    if s in {"SOL", "ADA", "AVAX","ATOM", "NEAR", "HYPE", "BNB","TRX","DOT","BCH","XLM","VET",
+    "SUI","FTM","HBAR","CRO","ICP","APT","ALGO","XTZ","EGLD","ETC","KAS","XDC","FLR","TIA","LUNC",
+    "NFT","BSV","MON","STX","CFX","XPL"}:
         tags.append("layer1")
-    if s in {"DOGE", "SHIB", "PEPE", "FLOKI", "PENGU"}:
+    if s in {"ARB","POL","OP","MNT","IMX"}:
+        tags.append("layer2")    
+    if s in {"DOGE", "SHIB", "PEPE", "FLOKI", "PENGU","M","TRUMP","币安人生","SPX","BONK","BTT"}:
         tags.append("meme")
-    if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP"}:
+    if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP","AERO","INJ","SKY","ETHFI","JUP","DEXE",
+    "ASTER","MORPHO","AWETH","JST","NEXO","ENA","PUMP","CAKE","AERO","SUN","CRV","LDO","GNO",
+    "JTO","PENDLE"}:
         tags.append("defi")
-    if s in {"ENA", "USDT","USDC"}:
+    if s in {"ENA", "USDT","USDC","DAI","PYUSD","USDE","USDG","USDS","USD1","RLUSD","USDD","U",
+    "STABLE","RAIN","USDY","USDF","BFUSD","USDGO","ADI","USYC","A7A5","TUSD","USX","USD0",
+    "YLDS","GHO","EURC","FDUSD"}:
         tags.append("stablecoin")
-    if s in {"XRP"}:
+    if s in {"XRP","LTC","BCH","XLM"}:
         tags.append("payments")
-    if s in {"ZEC"}:
+    if s in {"ZEC","XMR","BDX","DASH","DCR"}:
         tags.append("privacy")        
     if s in {"ETH"}:
         tags.append("smart-contracts")
-    if s in {"FIGR_HELOC"}:
+    if s in {"FIGR_HELOC","WLFI","PAXG","XAUT","ONDO","USDY","EUTBL","BCAP","USYC","HASH","BUIDL",
+    "JAAA","USTB","JTRSY","EUR"}:
         tags.append("rwa")            
-    if "bitcoin" in n:
+    if s in {"LINK","PYHT"}:
+        tags.append("oracle")
+    if s in {"TAO","FET","RENDER","WLD","NIGHT","VVV","ZAMA","VIRTUAL","KAITO",}:
+        tags.append("ai")    
+    if s in {"GRAM","CC","GRT","QNT","HASH","FIL","ZRO","JASMY"}:
+        tags.append("infra")
+    if s in {"OKB","LEO","CRO","BGB","KCS","WBT","HTX","GT"}:
+        tags.append("exchange-token")
+    if s in {"PI","IMX"}:
+        tags.append("gaming")                
+    if s in {"BTC","PAXG","XAUT"}:
         tags.append("store-of-value")
     if "ethereum" in n:
         tags.append("smart-contracts")

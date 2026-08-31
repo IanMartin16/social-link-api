@@ -71,7 +71,9 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"ZEC"}:
         tags.append("privacy")        
     if s in {"ETH"}:
-        tags.append("smart-contracts")        
+        tags.append("smart-contracts")
+    if s in {"FIGR_HELOC"}:
+        tags.append("rwa")            
     if "bitcoin" in n:
         tags.append("store-of-value")
     if "ethereum" in n:

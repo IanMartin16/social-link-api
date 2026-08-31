@@ -60,7 +60,7 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
         tags.append("majors-led")
     if s in {"SOL", "ADA", "AVAX", "ATOM", "NEAR"}:
         tags.append("layer1")
-    if s in {"DOGE", "SHIB", "PEPE", "FLOKI"}:
+    if s in {"DOGE", "SHIB", "PEPE", "FLOKI", "PENGU"}:
         tags.append("meme")
     if s in {"LINK", "UNI", "AAVE", "MKR"}:
         tags.append("defi")

@@ -67,7 +67,9 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"ENA", "USDT","USDC"}:
         tags.append("stablecoin")
     if s in {"XRP"}:
-        tags.append("payments")    
+        tags.append("payments")
+    if s in {"ZEC"}:
+        tags.append("privacy")        
     if s in {"ETH"}:
         tags.append("smart-contracts")        
     if "bitcoin" in n:

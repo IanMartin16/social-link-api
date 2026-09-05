@@ -1,11 +1,11 @@
 ALLOWED_SOCIAL_ASSETS = {
-    "BTC", "ETH", "SOL", "XRP", "ADA", "BNB", "DOGE", "POL", "AVAX", "DOT",
+  "BTC", "ETH", "SOL", "XRP", "ADA", "BNB", "DOGE", "POL", "AVAX", "DOT",
   "LINK", "UNI","LTC","USDT","USDC","SHIB","DAI","BCH","XLM","NEAR",
   "VET","TRX","ATOM","SUI","ARB","FTM", "OP","HYPE","PYUSD","GRAM",
   "OKB","PI","LEO","XMR","USDE","CC","WLFI","HBAR","MNT","PAXG",
   "PEPE", "FLOKI", "AAVE", "MKR", "CRO", "TAO", "USDG", "INJ", "SKY", "ICP",
   "APT", "ALGO", "XTZ", "EGLD", "FET", "RENDER", "ETHFI", "GRT", "JUP", "PYTH",
-  "ZEC", "USDS", "USD1", "QNT", "XAUt", "M", "DEXE", "ASTER", "ONDO", "RLUSD",
+  "ZEC", "USDS", "USD1", "QNT", "XAUT", "M", "DEXE", "ASTER", "ONDO", "RLUSD",
   "USDD", "WLD", "BGB", "ETC", "MORPHO", "U", "KCS", "BEAT", "KAS", "STABLE",
   "FIGR_HELOC", "RAIN", "WBT", "AWETH", "JST", "USDY", "LAB", "HTX", "USDF", "BFUSD",
   "EUTBL", "BCAP", "USDGO", "NEXO", "ENA", "ADI", "GT", "BUIDL", "NIGHT", "BDX",
@@ -14,6 +14,11 @@ ALLOWED_SOCIAL_ASSETS = {
   "FLR", "EURC", "PANCAKE", "AERO", "DASH", "SEI", "VIRTUAL", "SUN", "CRV", "FDUSD",
   "SPX", "TIA", "ZRO", "KAITO", "LDO", "GNO", "LUNC", "JTO", "NFT", "BONK",
   "BTT", "BSV", "MON", "STX", "PENDLE", "CFX", "IMX", "JASMY", "DCR", "XPL",
+  "BTW", "LIT", "USDTB", "KAU", "OUSG", "APXUSD", "KITE", "FF", "SOFIUSD", "UB",
+  "PIEVERSE", "OHM", "ONYC", "CRVUSD", "SAFE", "MARSCOIN", "AI", "KAG", "REUSD", "GRASS",
+  "CASHCAT", "AUSD", "USDAI", "RAY", "KOGE", "PONS", "SYRUP", "CVX", "CARDS", "FRAX",
+  "TWT", "KAIA", "2Z", "IOTA", "ULTIMA", "AKE", "COMP", "STRK", "USAT", "SKR",
+  "USELESS", "APYUSD", "BORG", "TEL", "COCO", "AXS", "RUNE", "MX", "DRV", "牛来",
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "HYPE"]

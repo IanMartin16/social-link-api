@@ -81,6 +81,10 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
         tags.append("privacy")        
     if s in {"ETH","KAIA"}:
         tags.append("smart-contracts")
+    if s in {"PONS"}:
+        tags.append("launchpad")    
+    if s in {"2Z","KOGE"}:
+        tags.append("binance alpha spotlight")   
     if s in {"FIGR_HELOC","WLFI","PAXG","XAUT","ONDO","USDY","EUTBL","BCAP","USYC","HASH","BUIDL",
     "JAAA","USTB","JTRSY","EUR","OUSG","KAU","ONYC","KAG","CARDS"}:
         tags.append("rwa")            

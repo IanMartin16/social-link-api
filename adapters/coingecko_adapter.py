@@ -60,44 +60,52 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
         tags.append("majors-led")
     if s in {"SOL", "ADA", "AVAX","ATOM", "NEAR", "HYPE", "BNB","TRX","DOT","BCH","XLM","VET",
     "SUI","FTM","HBAR","CRO","ICP","APT","ALGO","XTZ","EGLD","ETC","KAS","XDC","FLR","TIA","LUNC",
-    "NFT","BSV","MON","STX","CFX","XPL","ULTIMA","KAIA","IOTA","TEL"}:
+    "NFT","BSV","MON","STX","CFX","XPL","ULTIMA","KAIA","IOTA","TEL","PRL","XCN","CHZ","XEC","A","OZO"}:
         tags.append("layer1")
     if s in {"ARB","POL","OP","MNT","IMX","STRK",}:
         tags.append("layer2")    
     if s in {"DOGE","SHIB","PEPE","FLOKI","PENGU","M","TRUMP","币安人生","SPX","BONK","BTT","AI","CASHCAT",
-    "USELESS","COCO","牛来","MARSCOIN"}:
+    "USELESS","COCO","牛来","MARSCOIN","APEPE","TIBBIR","WIF","B","NPC","ZCAT","龙虾"}:
         tags.append("meme")
     if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP","AERO","INJ","SKY","ETHFI","JUP","DEXE",
     "ASTER","MORPHO","AWETH","JST","NEXO","ENA","PUMP","CAKE","AERO","SUN","CRV","LDO","GNO","IOTA",
-    "JTO","PENDLE","LIT","BTW","OHM","RAY","CRVUSD","CVX","SYRUP","ULTIMA","EDGE","COMP","TEL","DRV","RUNE"}:
+    "JTO","PENDLE","LIT","BTW","OHM","RAY","CRVUSD","CVX","SYRUP","ULTIMA","EDGE","COMP","TEL","DRV","RUNE",
+    "BR","ZBCN","SAFO","SNX","MET"}:
         tags.append("defi")
     if s in {"ENA", "USDT","USDC","DAI","PYUSD","USDE","USDG","USDS","USD1","RLUSD","USDD","U",
     "STABLE","RAIN","USDY","USDF","BFUSD","USDGO","ADI","USYC","A7A5","TUSD","USX","USD0","APYUSD",
-    "YLDS","GHO","EURC","FDUSD","LAB","USDTB","APXUSD","SOFID","CRVUSD","REUSD","AUSD","USDAI","FRAX"}:
+    "YLDS","GHO","EURC","FDUSD","LAB","USDTB","APXUSD","SOFID","CRVUSD","REUSD","AUSD","USDAI","FRAX",
+    "EURCV","GUSD","JPYSC","CASH","AVUSD"}:
         tags.append("stablecoin")
     if s in {"XRP","LTC","BCH","XLM"}:
         tags.append("payments")
-    if s in {"ZEC","XMR","BDX","DASH","DCR"}:
-        tags.append("privacy")        
-    if s in {"ETH","KAIA"}:
+    if s in {"ZEC","XMR","BDX","DASH","DCR","H","ZEN","RAIL"}:
+        tags.append("privacy") 
+    if s in {"BC","SHFL"}:
+        tags.append("gambling")           
+    if s in {"ETH","KAIA","NEO"}:
         tags.append("smart-contracts")
-    if s in {"PONS"}:
+    if s in {"PONS","STONK"}:
         tags.append("launchpad")    
     if s in {"2Z","KOGE"}:
         tags.append("binance alpha spotlight")   
     if s in {"FIGR_HELOC","WLFI","PAXG","XAUT","ONDO","USDY","EUTBL","BCAP","USYC","HASH","BUIDL",
-    "JAAA","USTB","JTRSY","EUR","OUSG","KAU","ONYC","KAG","CARDS"}:
+    "JAAA","USTB","JTRSY","EUR","OUSG","KAU","ONYC","KAG","CARDS","PC0000031",}:
         tags.append("rwa")            
     if s in {"LINK","PYHT"}:
         tags.append("oracle")
+    if s in {"SFP","TWT","ANTFUN"}:
+        tags.append("wallets")    
+    if s in {"GRX","BTSE","BP"}:
+        tags.append("cex")    
     if s in {"TAO","FET","RENDER","WLD","NIGHT","VVV","ZAMA","VIRTUAL","KAITO","UB","KITE","PIEVERSE",
-    "GRASS","AKE",}:
+    "GRASS","AKE","EIGEN","THETA","PRL","AR","AKT","TRAC","DGAI","AWE"}:
         tags.append("ai")    
     if s in {"GRAM","CC","GRT","QNT","HASH","FIL","ZRO","JASMY","SKR"}:
         tags.append("infra")
     if s in {"OKB","LEO","CRO","BGB","KCS","WBT","HTX","GT","MX"}:
         tags.append("exchange-token")
-    if s in {"PI","IMX","AXS"}:
+    if s in {"PI","IMX","AXS","APE","RLB"}:
         tags.append("gaming")                
     if s in {"BTC","PAXG","XAUT","BEAT"}:
         tags.append("store-of-value")

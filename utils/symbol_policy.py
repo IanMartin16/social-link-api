@@ -14,11 +14,16 @@ ALLOWED_SOCIAL_ASSETS = {
   "FLR", "EURC", "PANCAKE", "AERO", "DASH", "SEI", "VIRTUAL", "SUN", "CRV", "FDUSD",
   "SPX", "TIA", "ZRO", "KAITO", "LDO", "GNO", "LUNC", "JTO", "NFT", "BONK",
   "BTT", "BSV", "MON", "STX", "PENDLE", "CFX", "IMX", "JASMY", "DCR", "XPL",
-  "BTW", "LIT", "USDTB", "KAU", "OUSG", "APXUSD", "KITE", "FF", "SOFIUSD", "UB",
+  "BTW", "LIT", "USDTB", "KAU", "OUSG", "APXUSD", "KITE", "FF", "SOFID", "UB",
   "PIEVERSE", "OHM", "ONYC", "CRVUSD", "SAFE", "MARSCOIN", "AI", "KAG", "REUSD", "GRASS",
   "CASHCAT", "AUSD", "USDAI", "RAY", "KOGE", "PONS", "SYRUP", "CVX", "CARDS", "FRAX",
   "TWT", "KAIA", "2Z", "IOTA", "ULTIMA", "AKE", "COMP", "STRK", "USAT", "SKR",
   "USELESS", "APYUSD", "BORG", "TEL", "COCO", "AXS", "RUNE", "MX", "DRV", "牛来",
+  "MCAT", "APEPE", "ENS", "TIBBIR", "PCOOOOO31", "GRX", "BR", "STONK", "EURCV", "SAFO",
+  "EIGEN", "THETA", "WIF", "B", "NPC", "H", "ZBCN", "PRL", "AR", "BTSE",
+  "ANTFUN", "GENIUS", "XCN", "KMNO", "龙虾", "ZCAT", "AKT", "CHZ", "NEO", "SHFL",
+  "GUSD", "XEC", "TRAC", "SNX", "BC", "DGAI", "SFP", "BP", "ZEN", "RAIL",
+  "APE", "JPYSC", "A", "CASH", "MET", "AVUSD", "RLB", "OZO", "AWE", "VSN"
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "HYPE"]

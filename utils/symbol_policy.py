@@ -19,14 +19,24 @@ ALLOWED_SOCIAL_ASSETS = {
   "CASHCAT", "AUSD", "USDAI", "RAY", "KOGE", "PONS", "SYRUP", "CVX", "CARDS", "FRAX",
   "TWT", "KAIA", "2Z", "IOTA", "ULTIMA", "AKE", "COMP", "STRK", "USAT", "SKR",
   "USELESS", "APYUSD", "BORG", "TEL", "COCO", "AXS", "RUNE", "MX", "DRV", "牛来",
-  "MCAT", "APEPE", "ENS", "TIBBIR", "PCOOOOO31", "GRX", "BR", "STONK", "EURCV", "SAFO",
+  "MCAT", "APEPE", "ENS", "TIBBIR", "PC0000031", "GRX", "BR", "STONK", "EURCV", "SAFO",
   "EIGEN", "THETA", "WIF", "B", "NPC", "H", "ZBCN", "PRL", "AR", "BTSE",
   "ANTFUN", "GENIUS", "XCN", "KMNO", "龙虾", "ZCAT", "AKT", "CHZ", "NEO", "SHFL",
   "GUSD", "XEC", "TRAC", "SNX", "BC", "DGAI", "SFP", "BP", "ZEN", "RAIL",
-  "APE", "JPYSC", "A", "CASH", "MET", "AVUSD", "RLB", "OZO", "AWE", "VSN"
+  "APE", "JPYSC", "A", "CASH", "MET", "AVUSD", "RLB", "OZO", "AWE", "VSN",
+  "SHRUB", "CP", "FIRO", "LAPTOP", "LSK", "EMBER", "INDEX", "UP", "HNT", "ZANO",
+  "RAM", "BTR", "EDGE", "TAKE", "PEAQ", "CHIP", "ANSEM", "VELVET", "ZYLO", "EDEL",
+  "SOPH", "POWER", "IOST", "WMTX", "NOCK", "M87", "FOGO", "ILV", "AURORA", "ARC",
+  "ASTRO", "RSFIRO", "ZORA", "ONG", "VTHO", "CVC", "REZ", "BFC", "G", "SCRT",
+  "FONE", "BLUECHIP", "DEBIT", "ORCA", "S", "ORBIO", "AIX", "CPOOL", "BICO", "WELL",
+  "KII", "CORE", "NIL", "PROM", "UAI", "SYN", "ZZZ", "FWA", "PAIR", "STORJ",
+  "PLUME", "ZETA", "LUNA", "MANTRA", "TRUE", "FARTCOIN", "MINA", "STRCX", "AIOZ", "SENT",
+  "JPYC", "BAT", "META", "SN51", "DBR", "GEOD", "SAND", "ATH", "Q", "KNTQ",
+  "RSR", "QTUM", "DYDX", "FORM", "SOSO", "SUPER", "FLUID", "NXM", "ZK", "ONE",
+  "COTI", "CNPY", "BNKR", "FLOCK", "ORE", "ARK", "AVA", "ZKC", "NEON", "GLM",
 }
 
-FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "HYPE"]
+FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "ZEC"]
 
 NARRATIVE_TAGS = {
     "majors-led",

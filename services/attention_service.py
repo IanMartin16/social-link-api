@@ -4,6 +4,8 @@ from repositories.attention_repo import fetch_attention_window
 from utils.symbol_policy import ALLOWED_SOCIAL_ASSETS
 from adapters.coingecko_adapter import infer_tags   # reusa el que ya existe
 from datetime import datetime, timezone
+from clients.alternative_client import fetch_fear_greed
+from adapters.alternative_adapter import map_fear_greed_to_backdrop
 
 # posición del trending: 0..14 (0 = más buscado). Normalizamos a "cercanía a top".
 TRENDING_SLOTS = 15
@@ -77,3 +79,10 @@ async def get_attention(limit: int = 15) -> dict:
             "coverage": "broad" if len(leaders) >= 8 else "moderate" if len(leaders) >= 4 else "low",
         },
     }
+
+    try:
+        fng = await fetch_fear_greed()
+        result["backdrop"] = map_fear_greed_to_backdrop(fng)
+    except Exception:
+        result["backdrop"] = None
+    return result

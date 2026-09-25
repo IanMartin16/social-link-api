@@ -43,33 +43,30 @@ async def get_attention(limit: int = 15) -> dict:
     data = await fetch_attention_window(days=14, recent_days=3)
     total, recent, prev, series = data["total"], data["recent"], data["prev"], data["series"]
 
-    # solo símbolos del stock (ícono local garantizado)
     max_app = max((r.appearances for r in total.values()), default=1)
 
     leaders = []
     for sym, row in total.items():
         if sym not in ALLOWED_SOCIAL_ASSETS:
-            continue   # fuera del stock → no se muestra (efímero o no curado)
-
+            continue
         score = _sustained_score(row.appearances, float(row.avg_pos) if row.avg_pos else None, max_app)
         delta, direction = _emergent(recent.get(sym), prev.get(sym))
-
         leaders.append({
             "asset": sym,
-            "attentionScore": score,                 # sostenida (real)
-            "attentionDeltaPct": delta,              # emergente (real)
-            "direction": direction,                  # up/down/flat (emergente)
-            "appearances": row.appearances,          # transparencia
+            "attentionScore": score,
+            "attentionDeltaPct": delta,
+            "direction": direction,
+            "appearances": row.appearances,
             "avgPosition": round(float(row.avg_pos), 1) if row.avg_pos else None,
-            "spark": series.get(sym, []),            # serie de posición (sparkline)
+            "spark": series.get(sym, []),
             "tags": infer_tags(sym, sym),
         })
 
-    # ordenar por atención sostenida desc, tomar top N
     leaders.sort(key=lambda x: x["attentionScore"], reverse=True)
     leaders = leaders[:limit]
 
-    return {
+    # 1) armar el result en una VARIABLE (no retornar directo)
+    result = {
         "ok": True,
         "source": "social-link-trending-history-v2",
         "ts": datetime.now(timezone.utc).isoformat(),
@@ -80,9 +77,12 @@ async def get_attention(limit: int = 15) -> dict:
         },
     }
 
+    # 2) agregar el backdrop (fng) ANTES del return
     try:
         fng = await fetch_fear_greed()
         result["backdrop"] = map_fear_greed_to_backdrop(fng)
     except Exception:
         result["backdrop"] = None
+
+    # 3) UN solo return, al final
     return result

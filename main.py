@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, APIRouter
 from datetime import datetime, timezone
 from fastapi.middleware.cors import CORSMiddleware
 from services.basic_signals_service import get_basic_signals
 from services.symbols_service import get_symbols_360, get_symbols_top
 from api.health import router as health_router
+from api.routes.attention import router as attention_router
 
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -39,6 +40,7 @@ async def lifespan(app):
 
 app = FastAPI(title="social-link", version="0.1.0", lifespan=lifespan)
 app.include_router(health_router)
+app.include_router(attention_router)
 
 app.add_middleware(
     CORSMiddleware,

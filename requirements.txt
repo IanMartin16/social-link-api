@@ -15,5 +15,5 @@ uvicorn==0.40.0
 httpx==0.28.1
 asyncpg>=0.30
 apscheduler>=3.10
-sqlalchemy>=2.0
+sqlalchemy[asyncio]
 alembic>=1.13

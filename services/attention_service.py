@@ -1,5 +1,4 @@
-"""Calcula attentionScore (sostenida) + direction/delta (emergente) sobre la
-historia del trending, filtrado al stock. window=14d, recent=3d."""
+import time 
 from repositories.attention_repo import fetch_attention_window
 from utils.symbol_policy import ALLOWED_SOCIAL_ASSETS
 from adapters.coingecko_adapter import infer_tags   # reusa el que ya existe
@@ -9,6 +8,11 @@ from adapters.alternative_adapter import map_fear_greed_to_backdrop
 
 # posición del trending: 0..14 (0 = más buscado). Normalizamos a "cercanía a top".
 TRENDING_SLOTS = 15
+
+_cache: dict | None = None
+_cache_at: float = 0.0
+_cache_key: int = 0
+_CACHE_TTL_S = 9 * 60 
 
 
 def _sustained_score(appearances: int, avg_pos: float | None, max_appearances: int) -> float:
@@ -38,8 +42,21 @@ def _emergent(recent, prev) -> tuple[float, str]:
     direction = "up" if delta > 5 else "down" if delta < -5 else "flat"
     return delta, direction
 
-
 async def get_attention(limit: int = 15) -> dict:
+    """Puerta con cache: sirve el cacheado si es fresco, si no recalcula.
+       Cachea por `limit` (distinto limit = distinto resultado)."""
+    global _cache, _cache_at, _cache_key
+    now = time.time()
+    if _cache is not None and _cache_key == limit and (now - _cache_at) < _CACHE_TTL_S:
+        return _cache   # fresco → sin tocar la BD ni fetch_fear_greed
+    fresh = await _compute_attention(limit=limit)
+    _cache = fresh
+    _cache_at = now
+    _cache_key = limit
+    return fresh    
+
+
+async def _compute_attention(limit: int = 15) -> dict:
     data = await fetch_attention_window(days=14, recent_days=3)
     total, recent, prev, series = data["total"], data["recent"], data["prev"], data["series"]
 

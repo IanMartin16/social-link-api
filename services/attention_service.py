@@ -5,6 +5,7 @@ from adapters.coingecko_adapter import infer_tags   # reusa el que ya existe
 from datetime import datetime, timezone
 from clients.alternative_client import fetch_fear_greed
 from adapters.alternative_adapter import map_fear_greed_to_backdrop
+from repositories.attention_repo import fetch_pulse_series  
 
 # posición del trending: 0..14 (0 = más buscado). Normalizamos a "cercanía a top".
 TRENDING_SLOTS = 15
@@ -82,6 +83,9 @@ async def _compute_attention(limit: int = 15) -> dict:
     leaders.sort(key=lambda x: x["attentionScore"], reverse=True)
     leaders = leaders[:limit]
 
+    # ... después de leaders.sort(...) y leaders = leaders[:limit] ...
+    pulse = await fetch_pulse_series(days=14, top_n=15)
+
     # 1) armar el result en una VARIABLE (no retornar directo)
     result = {
         "ok": True,
@@ -90,6 +94,7 @@ async def _compute_attention(limit: int = 15) -> dict:
         "window": "14d",
         "market": {
             "attentionLeaders": leaders,
+            "pulseSeries": pulse,
             "coverage": "broad" if len(leaders) >= 8 else "moderate" if len(leaders) >= 4 else "low",
         },
     }
@@ -101,5 +106,4 @@ async def _compute_attention(limit: int = 15) -> dict:
     except Exception:
         result["backdrop"] = None
 
-    # 3) UN solo return, al final
     return result

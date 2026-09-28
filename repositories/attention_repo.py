@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy import select, func, and_
 from db.session import get_session
-from db.models import TrendingSnapshot   # ajustar import real
+from db.models import TrendingSnapshot 
 
 
 async def fetch_attention_window(days: int = 14, recent_days: int = 3) -> dict:
@@ -86,3 +86,51 @@ async def fetch_attention_window(days: int = 14, recent_days: int = 3) -> dict:
 
     return {"total": total, "recent": recent, "prev": prev, "series": series,
             "window_days": days, "recent_days": recent_days}
+
+async def fetch_pulse_series(days: int = 14, top_n: int = 15) -> list[dict]:
+    """Serie del composite de atención por día (últimos `days`).
+       composite del día = promedio de (15 - position) de los top_n mejores de ese día.
+       Refleja la atención de ESE día → evoluciona (no el score-14d estable)."""
+
+    start = datetime.now(timezone.utc) - timedelta(days=days)
+
+    async with get_session() as db:
+        # posición promedio por símbolo POR DÍA (solo los que aparecieron ese día)
+        day_col = func.date_trunc("day", TrendingSnapshot.captured_at).label("day")
+        per_symbol_day = (
+            select(
+                day_col,
+                TrendingSnapshot.symbol,
+                func.avg(TrendingSnapshot.position).label("avg_pos"),
+            )
+            .where(TrendingSnapshot.captured_at >= start)
+            .group_by(day_col, TrendingSnapshot.symbol)
+        ).subquery()
+
+        rows = (await db.execute(
+            select(per_symbol_day.c.day, per_symbol_day.c.symbol, per_symbol_day.c.avg_pos)
+            .order_by(per_symbol_day.c.day)
+        )).all()
+
+    # agrupar por día en Python: tomar los top_n (mejor posición = menor avg_pos)
+    # y promediar su "atención" (15 - pos)
+    from collections import defaultdict
+    by_day: dict = defaultdict(list)
+    for r in rows:
+        by_day[r.day].append((r.symbol, float(r.avg_pos)))
+
+    TRENDING_SLOTS = 15
+    series = []
+    for day in sorted(by_day.keys()):
+        # top_n por mejor posición (menor avg_pos)
+        best = sorted(by_day[day], key=lambda x: x[1])[:top_n]
+        if not best:
+            continue
+        composite = sum(max(0.0, TRENDING_SLOTS - pos) for _, pos in best) / len(best)
+        # a escala 0..100 (posición invertida 0..15 → *~6.67)
+        composite_100 = round(composite / TRENDING_SLOTS * 100, 1)
+        series.append({
+            "day": day.date().isoformat(),   # "2026-09-28"
+            "composite": composite_100,
+        })
+    return series            

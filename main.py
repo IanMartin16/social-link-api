@@ -5,6 +5,9 @@ from services.basic_signals_service import get_basic_signals
 from services.symbols_service import get_symbols_360, get_symbols_top
 from api.health import router as health_router
 from api.routes.attention import router as attention_router
+from detector.episodizer import run_episodizer
+from detector.tracker import run_tracker
+from db.session import get_session
 
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -15,28 +18,58 @@ from jobs.persistence_job import persist_snapshot
 scheduler = AsyncIOScheduler()
 
 
+# wrappers de los jobs del detector
+async def capture_and_episodize():
+    # 1) tu captura de siempre (escribe y commitea el batch de trending)
+    await persist_snapshot()
+    # 2) el episodizador, sobre el batch recién escrito. Aislado: si truena,
+    #    NO tumba la persistencia (filosofía Lego).
+    try:
+        async with get_session() as s:
+            summary = await run_episodizer(s)
+            print(f"[episodizer] {summary}")
+    except Exception as e:
+        print(f"[episodizer] error: {e}")
+
+async def tracker_job():
+    try:
+        async with get_session() as s:
+            summary = await run_tracker(s)
+            print(f"[tracker] {summary}")
+    except Exception as e:
+        print(f"[tracker] error: {e}")
+
+
 @asynccontextmanager
 async def lifespan(app):
     # --- startup ---
+    # captura + episodizador encadenados (el episodizador ve el batch fresco)
     scheduler.add_job(
-        persist_snapshot,
+        capture_and_episodize,
         trigger=IntervalTrigger(minutes=10),
-        id="persist_snapshot",
-        max_instances=1,          # no solapar ejecuciones
-        coalesce=True,            # si se acumulan, corre una sola vez
-        misfire_grace_time=120,   # tolerancia si el loop está ocupado
+        id="persist_snapshot",          # reemplaza el job anterior
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=120,
+    )
+    # tracker: seguimiento post-trending, más seguido
+    scheduler.add_job(
+        tracker_job,
+        trigger=IntervalTrigger(minutes=3),
+        id="detector_tracker",
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=120,
     )
     scheduler.start()
-    print("[scheduler] persistence job scheduled every 10 min")
-
-    # opcional: una captura al arrancar para no esperar 10 min al primer dato
-    #await persist_snapshot()
+    print("[scheduler] persist+episodizer every 10 min, tracker every 3 min")
 
     yield
 
     # --- shutdown ---
     scheduler.shutdown(wait=False)
     print("[scheduler] stopped")
+
 
 app = FastAPI(title="social-link", version="0.1.0", lifespan=lifespan)
 app.include_router(health_router)

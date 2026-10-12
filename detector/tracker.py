@@ -10,24 +10,18 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import TrendingEpisode, EpisodeTrack
+from .models import TrendingEpisode, EpisodeTrack
 
 log = logging.getLogger("detector.tracker")
 
 EVENT_DROP = 0.80           # drawdown desde el pico que define COLAPSO
 CENSOR_DAYS = 14            # sobrevive 14d sin evento -> CENSORED
 INTENSIVE_HOURS = 48        # POST_INTENSIVE -> POST_LIGHT
-BATCH_IDS = 250             # /simple/price aguanta muchos ids por llamada
+STALE_ENTRY_DROP = 0.50    # red de seguridad: 1er precio fresco >50% bajo el entry
+                           # con pico sin confirmar = entry rancio -> re-anclar
+BATCH_IDS = 250
 
-# NOTA DE CUOTA — por qué el tracker es KEYLESS y NO usa la demo key:
-# corre seguido (cada ~3 min) y casi siempre hay episodios abiertos → ~1 call/3min
-# ≈ 14,000 calls/mes. La Demo key tiene tope de 10,000/mes → la reventaría.
-# Keyless NO tiene tope mensual, y su límite por-minuto (1 call cada 3 min) sobra.
-# El gate (market_chart, por-coin, solo en nacimientos) sí puede usar la demo; el
-# tracker (simple/price, batch, alta frecuencia) debe quedarse keyless. Cada uno
-# en su carril.
-
-PriceMap = dict[str, dict]                       # coingecko_id -> {"usd":..., "usd_24h_vol":...}
+PriceMap = dict[str, dict]
 FetchPrices = Callable[[list[str]], Awaitable[PriceMap]]
 
 
@@ -43,7 +37,7 @@ async def _default_fetch_prices(ids: list[str]) -> PriceMap:
                 async with httpx.AsyncClient(timeout=10) as c:
                     r = await c.get(url, params=params)
                     if r.status_code == 429:
-                        await asyncio.sleep(2 * (attempt + 1))   # backoff
+                        await asyncio.sleep(2 * (attempt + 1))
                         continue
                     r.raise_for_status()
                     out.update(r.json())
@@ -80,41 +74,60 @@ async def run_tracker(
     ids = sorted({ep.coingecko_id for ep in episodes if ep.coingecko_id})
     prices = await fetch_prices(ids) if ids else {}
 
-    events = censored = downshift = tracked = missing = 0
+    events = censored = downshift = tracked = missing = reanchored = 0
 
     for ep in episodes:
         q = prices.get(ep.coingecko_id or "")
         price = float(q["usd"]) if q and q.get("usd") is not None else None
         vol = q.get("usd_24h_vol") if q else None
 
-        # 1) cadencia POST_INTENSIVE -> POST_LIGHT (48h fuera del trending)
+        # 1) cadencia POST_INTENSIVE -> POST_LIGHT
         if ep.state == "POST_INTENSIVE" and ep.left_trend_at:
             if _hours(ep.left_trend_at, now) >= INTENSIVE_HOURS:
                 ep.state = "POST_LIGHT"
                 downshift += 1
 
         if price is None:
-            missing += 1   # el id no volvió en /simple/price (raro: delisted/typo)
+            missing += 1
         else:
-            # 2) pico/fondo/drawdown (rolling)
-            if ep.peak_price is None or price > float(ep.peak_price):
-                ep.peak_price, ep.peak_at = price, now
-            if ep.trough_price is None or price < float(ep.trough_price):
+            # 2) RED DE SEGURIDAD: entry rancio -> re-anclar (NO disparar EVENT)
+            #    El pico sigue siendo el de nacimiento (nunca confirmado en vivo) y el
+            #    precio fresco está muy por debajo = el trending traía precio stale.
+            stale_entry = (
+                ep.peak_at is not None
+                and ep.peak_at == ep.entered_trend_at
+                and ep.peak_price is not None
+                and price < float(ep.peak_price) * (1 - STALE_ENTRY_DROP)
+            )
+            if stale_entry:
+                ep.peak_price, ep.peak_at = price, now      # re-ancla al precio fresco real
                 ep.trough_price, ep.trough_at = price, now
-            dd = _dd(ep.peak_price, price)
-            if dd is not None and (ep.max_drawdown is None or dd > float(ep.max_drawdown)):
-                ep.max_drawdown = dd
+                ep.max_drawdown = 0
+                ep.peak_confidence = "reanchored"
+                reanchored += 1
+            else:
+                # 3) pico/fondo/drawdown (rolling) — dueño único del precio-estado
+                if ep.peak_price is None or price > float(ep.peak_price):
+                    ep.peak_price, ep.peak_at = price, now
+                if ep.trough_price is None or price < float(ep.trough_price):
+                    ep.trough_price, ep.trough_at = price, now
+                dd = _dd(ep.peak_price, price)
+                if dd is not None and (ep.max_drawdown is None or dd > float(ep.max_drawdown)):
+                    ep.max_drawdown = dd
 
-            # 3) EVENT (colapso)
-            if dd is not None and dd >= EVENT_DROP:
-                ep.state = "CLOSED"
-                ep.label = "EVENT"
-                ep.event_at = now
-                ep.closed_at = now
-                ep.time_to_event_h = _hours(ep.entered_trend_at, now)
-                if ep.peak_at:
-                    ep.dump_speed_h = _hours(ep.peak_at, now)
-                events += 1
+                # 4) EVENT — solo si el pico fue confirmado en vivo (peak_at > entry)
+                #    Doble candado: si el pico sigue siendo el del nacimiento, NO se
+                #    emite EVENT (no observamos el descenso = no es etiqueta confiable).
+                peak_confirmed = ep.peak_at is not None and ep.peak_at > ep.entered_trend_at
+                if dd is not None and dd >= EVENT_DROP and peak_confirmed:
+                    ep.state = "CLOSED"
+                    ep.label = "EVENT"
+                    ep.event_at = now
+                    ep.closed_at = now
+                    ep.time_to_event_h = _hours(ep.entered_trend_at, now)
+                    if ep.peak_at:
+                        ep.dump_speed_h = _hours(ep.peak_at, now)
+                    events += 1
 
             # track row (idempotente por (episode_id, ts))
             await session.execute(
@@ -130,7 +143,7 @@ async def run_tracker(
             )
             tracked += 1
 
-        # 4) CENSORED (sobrevivió 14d sin evento = excepción genuina)
+        # 5) CENSORED (sobrevivió 14d sin evento)
         if ep.state != "CLOSED" and _hours(ep.entered_trend_at, now) >= CENSOR_DAYS * 24:
             ep.state = "CLOSED"
             ep.label = "CENSORED"
@@ -140,7 +153,8 @@ async def run_tracker(
     await session.commit()
     summary = {
         "open_before": len(episodes), "tracked": tracked, "events": events,
-        "censored": censored, "downshift": downshift, "missing_price": missing,
+        "censored": censored, "downshift": downshift, "reanchored": reanchored,
+        "missing_price": missing,
     }
     log.info("tracker: %s", summary)
     return summary

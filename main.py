@@ -70,7 +70,6 @@ async def lifespan(app):
     scheduler.shutdown(wait=False)
     print("[scheduler] stopped")
 
-
 app = FastAPI(title="social-link", version="0.1.0", lifespan=lifespan)
 app.include_router(health_router)
 app.include_router(attention_router)

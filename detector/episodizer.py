@@ -9,8 +9,8 @@ from sqlalchemy import select, func, and_
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import TrendingSnapshot, TrendingEpisode, EpisodeTrack
-from .resolver import resolve_cl_id
+from db.models import TrendingSnapshot, TrendingEpisode, EpisodeTrack
+from detector.resolver import resolve_cl_id
 
 log = logging.getLogger("detector.episodizer")
 

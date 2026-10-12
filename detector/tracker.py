@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import TrendingEpisode, EpisodeTrack
+from db.models import TrendingEpisode, EpisodeTrack
 
 log = logging.getLogger("detector.tracker")
 

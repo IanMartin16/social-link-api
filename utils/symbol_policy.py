@@ -34,6 +34,11 @@ ALLOWED_SOCIAL_ASSETS = {
   "JPYC", "BAT", "META", "SN51", "DBR", "GEOD", "SAND", "ATH", "Q", "KNTQ",
   "RSR", "QTUM", "DYDX", "FORM", "SOSO", "SUPER", "FLUID", "NXM", "ZK", "ONE",
   "COTI", "CNPY", "BNKR", "FLOCK", "ORE", "ARK", "AVA", "ZKC", "NEON", "GLM",
+  "OUSD", "MOVR", "RHEA", "SC", "PHA", "POD", "BEAM", "NEURAL", "0G", "ZIL", 
+  "T", "CAP", "1INCH", "SHX", "SOON", "NMR", "STAC", "USD3", "UUSD", "CRCLB",
+  "WAL", "ARKM", "VELO", "ESP", "DATA", "KAVA", "EXOD", "IO", "ROSE", "RLC",
+  "BIO", "BABY", "AXL", "ALLO", "ELF", "ONT", "ID", "HOLO", "AZTEC", "NEX", 
+  "SN4", "W", "PROS", "QUBIC", "MUBARAK", "XNO", "NVDAX", "IUSD", "MOVE", "US",
 }
 
 FALLBACK_ASSETS = ["BTC", "ETH", "USDT", "BNB", "USDC", "XRP", "SOL", "TRX", "FIGR_HELOC", "ZEC"]

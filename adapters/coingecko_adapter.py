@@ -61,24 +61,24 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"SOL", "ADA", "AVAX","ATOM", "NEAR", "HYPE", "BNB","TRX","DOT","BCH","XLM","VET",
     "SUI","FTM","HBAR","CRO","ICP","APT","ALGO","XTZ","EGLD","ETC","KAS","XDC","FLR","TIA","LUNC",
     "NFT","BSV","MON","STX","CFX","XPL","ULTIMA","KAIA","IOTA","TEL","PRL","XCN","CHZ","XEC","A","OZO",
-    "ZANO","PEAQ","S","MINA","AIOZ","PLUME"}:
+    "ZANO","PEAQ","S","MINA","AIOZ","PLUME","MOVR","KAVA","ROSE","ELF","NEX","PROS","NANO","MOVE"}:
         tags.append("layer1")
-    if s in {"ARB","POL","OP","MNT","IMX","STRK","PROM","ZK"}:
+    if s in {"ARB","POL","OP","MNT","IMX","STRK","PROM","ZK","SOON","STAC","AZTEC"}:
         tags.append("layer2")    
     if s in {"DOGE","SHIB","PEPE","FLOKI","PENGU","M","TRUMP","币安人生","SPX","BONK","BTT","AI","CASHCAT",
     "USELESS","COCO","牛来","MARSCOIN","APEPE","TIBBIR","WIF","B","NPC","ZCAT","龙虾","LAPTOP","SHRUB",
-    "ANSEM","ASTRO","BLUECHIP","FONE","AIX","ZZZ","FARTCOIN"}:
+    "ANSEM","ASTRO","BLUECHIP","FONE","AIX","ZZZ","FARTCOIN","MUBARAK"}:
         tags.append("meme")
     if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP","AERO","INJ","SKY","ETHFI","JUP","DEXE",
     "ASTER","MORPHO","AWETH","JST","NEXO","ENA","PUMP","CAKE","AERO","SUN","CRV","LDO","GNO","IOTA",
     "JTO","PENDLE","LIT","BTW","OHM","RAY","CRVUSD","CVX","SYRUP","ULTIMA","EDGE","COMP","TEL","DRV","RUNE",
     "BR","ZBCN","SAFO","SNX","MET","UP","RAM","EDGE","CHIP","REZ","DEBIT","ORCA","CPOOL","WELL","LUNA",
-    "NXM","FLUID","SOSO","DYDX","RSR","KNTQ","ORE"}:
+    "NXM","FLUID","SOSO","DYDX","RSR","KNTQ","ORE","RHEA","T","CAP","1INCH","NMR","VELO","BABY"}:
         tags.append("defi")
     if s in {"ENA", "USDT","USDC","DAI","PYUSD","USDE","USDG","USDS","USD1","RLUSD","USDD","U",
     "STABLE","RAIN","USDY","USDF","BFUSD","USDGO","ADI","USYC","A7A5","TUSD","USX","USD0","APYUSD",
     "YLDS","GHO","EURC","FDUSD","LAB","USDTB","APXUSD","SOFID","CRVUSD","REUSD","AUSD","USDAI","FRAX",
-    "EURCV","GUSD","JPYSC","CASH","AVUSD","JPYC"}:
+    "EURCV","GUSD","JPYSC","CASH","AVUSD","JPYC","OUSD","UUSD",}:
         tags.append("stablecoin")
     if s in {"XRP","LTC","BCH","XLM"}:
         tags.append("payments")
@@ -88,32 +88,33 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
         tags.append("gambling")           
     if s in {"ETH","KAIA","NEO","FIRO","LSK","ZANO","HNT","BTR","PEAQ","NOCK","SOPH","IOST",
             "FOGO","ONG","VTHO","G","S","PROM","CORE","KII","PLUME","ZETA","MANTRA","ZK",
-            "SUPER","QTUM","ONE","COTI","NEON","ZKC","ARK"}:
+            "SUPER","QTUM","ONE","COTI","NEON","ZKC","ARK","SIC","ZIL","ONT","PROS"}:
         tags.append("smart-contracts")
     if s in {"PONS","STONK","ZORA","PAIR","META"}:
         tags.append("launchpad")    
     if s in {"2Z","KOGE"}:
         tags.append("binance alpha spotlight")   
     if s in {"FIGR_HELOC","WLFI","PAXG","XAUT","ONDO","USDY","EUTBL","BCAP","USYC","HASH","BUIDL",
-    "JAAA","USTB","JTRSY","EUR","OUSG","KAU","ONYC","KAG","CARDS","PC0000031","STRCX"}:
+    "JAAA","USTB","JTRSY","EUR","OUSG","KAU","ONYC","KAG","CARDS","PC0000031","STRCX","CRCLB","NVDAX"}:
         tags.append("rwa")            
     if s in {"LINK","PYHT"}:
         tags.append("oracle")
-    if s in {"FWA","ENS"}:
+    if s in {"FWA","ENS","ID"}:
         tags.append("nft")    
-    if s in {"SFP","TWT","ANTFUN"}:
+    if s in {"SFP","TWT","ANTFUN","EXOD",}:
         tags.append("wallets")    
     if s in {"GRX","BTSE","BP"}:
         tags.append("cex")    
     if s in {"TAO","FET","RENDER","WLD","NIGHT","VVV","ZAMA","VIRTUAL","KAITO","UB","KITE","PIEVERSE",
     "GRASS","AKE","EIGEN","THETA","PRL","AR","AKT","TRAC","DGAI","AWE","CP","VELVET","WMTX","M87","ARC",
-    "SCRT","ORBIO","UAI","AIOZ","SENT","SN51","GLM","Q","ATH","CANOPY","BNKR","FLOCK"}:
+    "SCRT","ORBIO","UAI","AIOZ","SENT","SN51","GLM","Q","ATH","CANOPY","BNKR","FLOCK","PHALA","POD",
+    "NEURAL","0G","WAL","ARKM","DATA","IO","RLC","ALLO","HOLO","SN4","QUBIC","US"}:
         tags.append("ai")    
     if s in {"GRAM","CC","GRT","QNT","HASH","FIL","ZRO","JASMY","SKR"}:
         tags.append("infra")
     if s in {"OKB","LEO","CRO","BGB","KCS","WBT","HTX","GT","MX"}:
         tags.append("exchange-token")
-    if s in {"PI","IMX","AXS","APE","RLB","TAKE","ZYLO","POWER","ILV","SAND","GEOD","FORM","SUPER"}:
+    if s in {"PI","IMX","AXS","APE","RLB","TAKE","ZYLO","POWER","ILV","SAND","GEOD","FORM","SUPER","BEAM"}:
         tags.append("gaming")                
     if s in {"BTC","PAXG","XAUT","BEAT"}:
         tags.append("store-of-value")

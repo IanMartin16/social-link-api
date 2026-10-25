@@ -87,7 +87,7 @@ async def fetch_attention_window(days: int = 14, recent_days: int = 3) -> dict:
     return {"total": total, "recent": recent, "prev": prev, "series": series,
             "window_days": days, "recent_days": recent_days}
 
-async def fetch_pulse_series(days: int = 14, top_n: int = 15) -> list[dict]:
+async def fetch_pulse_series(days: int = 14, top_n: int = 20) -> list[dict]:
     """Serie del composite de atención por día (últimos `days`).
        composite del día = promedio de (15 - position) de los top_n mejores de ese día.
        Refleja la atención de ESE día → evoluciona (no el score-14d estable)."""
@@ -119,7 +119,7 @@ async def fetch_pulse_series(days: int = 14, top_n: int = 15) -> list[dict]:
     for r in rows:
         by_day[r.day].append((r.symbol, float(r.avg_pos)))
 
-    TRENDING_SLOTS = 15
+    TRENDING_SLOTS = 20
     series = []
     for day in sorted(by_day.keys()):
         # top_n por mejor posición (menor avg_pos)

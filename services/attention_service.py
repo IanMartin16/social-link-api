@@ -8,7 +8,7 @@ from adapters.alternative_adapter import map_fear_greed_to_backdrop
 from repositories.attention_repo import fetch_pulse_series  
 
 # posición del trending: 0..14 (0 = más buscado). Normalizamos a "cercanía a top".
-TRENDING_SLOTS = 15
+TRENDING_SLOTS = 20
 
 _cache: dict | None = None
 _cache_at: float = 0.0
@@ -43,7 +43,7 @@ def _emergent(recent, prev) -> tuple[float, str]:
     direction = "up" if delta > 5 else "down" if delta < -5 else "flat"
     return delta, direction
 
-async def get_attention(limit: int = 15) -> dict:
+async def get_attention(limit: int = 20) -> dict:
     """Puerta con cache: sirve el cacheado si es fresco, si no recalcula.
        Cachea por `limit` (distinto limit = distinto resultado)."""
     global _cache, _cache_at, _cache_key
@@ -57,7 +57,7 @@ async def get_attention(limit: int = 15) -> dict:
     return fresh    
 
 
-async def _compute_attention(limit: int = 15) -> dict:
+async def _compute_attention(limit: int = 20) -> dict:
     data = await fetch_attention_window(days=14, recent_days=3)
     total, recent, prev, series = data["total"], data["recent"], data["prev"], data["series"]
 
@@ -84,7 +84,7 @@ async def _compute_attention(limit: int = 15) -> dict:
     leaders = leaders[:limit]
 
     # ... después de leaders.sort(...) y leaders = leaders[:limit] ...
-    pulse = await fetch_pulse_series(days=14, top_n=15)
+    pulse = await fetch_pulse_series(days=14, top_n=20)
 
     # 1) armar el result en una VARIABLE (no retornar directo)
     result = {

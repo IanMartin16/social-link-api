@@ -46,27 +46,13 @@ def _money_str_to_float(v):
 
 
 async def _cached_top_markets():
-    return await cache.get_or_fetch(
-        key=f"markets:top:{TOP_N}:usd",
-        fetch_fn=lambda: fetch_top_markets(vs_currency="usd", per_page=TOP_N),
-        ttl_seconds=CACHE_TTL,
-    )
-
+    return await fetch_top_markets(vs_currency="usd", per_page=TOP_N)   # ya cachea adentro
 
 async def _cached_trending():
-    return await cache.get_or_fetch(
-        key="trending:usd",
-        fetch_fn=fetch_trending,
-        ttl_seconds=CACHE_TTL,
-    )
-
+    return await fetch_trending()                                       # ya cachea adentro
 
 async def _cached_fng():
-    raw = await cache.get_or_fetch(
-        key="fng",
-        fetch_fn=fetch_fear_greed,
-        ttl_seconds=CACHE_TTL,
-    )
+    raw = await cache.get_or_fetch(key="fng", fetch_fn=fetch_fear_greed, ttl_seconds=CACHE_TTL)
     return map_fear_greed_to_backdrop(raw)
 
 

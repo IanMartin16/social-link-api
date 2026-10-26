@@ -61,13 +61,14 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"SOL", "ADA", "AVAX","ATOM", "NEAR", "HYPE", "BNB","TRX","DOT","BCH","XLM","VET",
     "SUI","FTM","HBAR","CRO","ICP","APT","ALGO","XTZ","EGLD","ETC","KAS","XDC","FLR","TIA","LUNC",
     "NFT","BSV","MON","STX","CFX","XPL","ULTIMA","KAIA","IOTA","TEL","PRL","XCN","CHZ","XEC","A","OZO",
-    "ZANO","PEAQ","S","MINA","AIOZ","PLUME","MOVR","KAVA","ROSE","ELF","NEX","PROS","NANO","MOVE"}:
+    "ZANO","PEAQ","S","MINA","AIOZ","PLUME","MOVR","KAVA","ROSE","ELF","NEX","PROS","NANO","MOVE","QTC",
+    "IRYS"}:
         tags.append("layer1")
     if s in {"ARB","POL","OP","MNT","IMX","STRK","PROM","ZK","SOON","STAC","AZTEC"}:
         tags.append("layer2")    
     if s in {"DOGE","SHIB","PEPE","FLOKI","PENGU","M","TRUMP","币安人生","SPX","BONK","BTT","AI","CASHCAT",
     "USELESS","COCO","牛来","MARSCOIN","APEPE","TIBBIR","WIF","B","NPC","ZCAT","龙虾","LAPTOP","SHRUB",
-    "ANSEM","ASTRO","BLUECHIP","FONE","AIX","ZZZ","FARTCOIN","MUBARAK"}:
+    "ANSEM","ASTRO","BLUECHIP","FONE","AIX","ZZZ","FARTCOIN","MUBARAK","DACITY","EVMZONE"}:
         tags.append("meme")
     if s in {"LINK", "UNI", "AAVE", "MKR", "HYPE", "PUMP","AERO","INJ","SKY","ETHFI","JUP","DEXE",
     "ASTER","MORPHO","AWETH","JST","NEXO","ENA","PUMP","CAKE","AERO","SUN","CRV","LDO","GNO","IOTA",
@@ -108,7 +109,7 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"TAO","FET","RENDER","WLD","NIGHT","VVV","ZAMA","VIRTUAL","KAITO","UB","KITE","PIEVERSE",
     "GRASS","AKE","EIGEN","THETA","PRL","AR","AKT","TRAC","DGAI","AWE","CP","VELVET","WMTX","M87","ARC",
     "SCRT","ORBIO","UAI","AIOZ","SENT","SN51","GLM","Q","ATH","CANOPY","BNKR","FLOCK","PHALA","POD",
-    "NEURAL","0G","WAL","ARKM","DATA","IO","RLC","ALLO","HOLO","SN4","QUBIC","US"}:
+    "NEURAL","0G","WAL","ARKM","DATA","IO","RLC","ALLO","HOLO","SN4","QUBIC","US","AXIS"}:
         tags.append("ai")    
     if s in {"GRAM","CC","GRT","QNT","HASH","FIL","ZRO","JASMY","SKR"}:
         tags.append("infra")

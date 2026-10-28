@@ -3,6 +3,7 @@ from clients.coingecko_client import fetch_trending
 from clients.alternative_client import fetch_fear_greed
 from adapters.coingecko_adapter import map_trending_to_basic_signals
 from adapters.alternative_adapter import map_fear_greed_to_backdrop
+from models.basic_signals import MarketBackdrop
 
 
 async def get_basic_signals(window: str = "1h", assets: list[str] | None = None, limit: int = 5):
@@ -18,7 +19,8 @@ async def get_basic_signals(window: str = "1h", assets: list[str] | None = None,
 
     try:
         fng = await fetch_fear_greed()
-        result.backdrop = map_fear_greed_to_backdrop(fng)
+        d = map_fear_greed_to_backdrop(fng)
+        result.backdrop = MarketBackdrop(**d) if d else None
     except Exception:
         result.backdrop = None
 

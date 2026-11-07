@@ -73,6 +73,7 @@ async def lifespan(app):
 app = FastAPI(title="social-link", version="0.1.0", lifespan=lifespan)
 app.include_router(health_router)
 app.include_router(attention_router)
+app.include_router(insights_router)
 
 app.add_middleware(
     CORSMiddleware,

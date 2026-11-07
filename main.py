@@ -5,6 +5,7 @@ from services.basic_signals_service import get_basic_signals
 from services.symbols_service import get_symbols_360, get_symbols_top
 from api.health import router as health_router
 from api.routes.attention import router as attention_router
+from api.routes.insights import router as insights_router
 from detector.episodizer import run_episodizer
 from detector.tracker import run_tracker
 from db.session import get_session

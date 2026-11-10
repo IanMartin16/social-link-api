@@ -26,7 +26,7 @@ async def fetch_market_structure(hours: int) -> dict:
                        snapshot_id,
                        date_trunc('hour', captured_at) AS hr
                 FROM asset_snapshot
-                WHERE captured_at >= now() - (:hours || ' hours')::interval
+                WHERE captured_at >= now() - :hours * interval '1 hour'
                 ORDER BY date_trunc('hour', captured_at), captured_at DESC
             )
             SELECT l.hr AS t,

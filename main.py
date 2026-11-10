@@ -14,6 +14,9 @@ from db.session import get_session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
+from jobs.prune_job import prune_asset_snapshot
+
 
 from jobs.persistence_job import persist_snapshot
 
@@ -63,6 +66,13 @@ async def lifespan(app):
         coalesce=True,
         misfire_grace_time=120,
     )
+
+    scheduler.add_job(
+        prune_asset_snapshot, 
+        CronTrigger(hour=4, minute=0), 
+        id="prune_asset_snapshot"
+    )
+
     scheduler.start()
     print("[scheduler] persist+episodizer every 10 min, tracker every 3 min")
 

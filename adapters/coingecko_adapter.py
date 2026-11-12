@@ -109,7 +109,7 @@ def infer_tags(symbol: str, name: str | None = None) -> list[str]:
     if s in {"TAO","FET","RENDER","WLD","NIGHT","VVV","ZAMA","VIRTUAL","KAITO","UB","KITE","PIEVERSE",
     "GRASS","AKE","EIGEN","THETA","PRL","AR","AKT","TRAC","DGAI","AWE","CP","VELVET","WMTX","M87","ARC",
     "SCRT","ORBIO","UAI","AIOZ","SENT","SN51","GLM","Q","ATH","CANOPY","BNKR","FLOCK","PHALA","POD",
-    "NEURAL","0G","WAL","ARKM","DATA","IO","RLC","ALLO","HOLO","SN4","QUBIC","US","AXIS","AIN"}:
+    "NEURAL","0G","WAL","ARKM","DATA","IO","RLC","ALLO","HOLO","SN4","QUBIC","US","AXIS","AIN","ZIG"}:
         tags.append("ai")    
     if s in {"GRAM","CC","GRT","QNT","HASH","FIL","ZRO","JASMY","SKR"}:
         tags.append("infra")

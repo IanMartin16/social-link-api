@@ -2,7 +2,7 @@
 from sqlalchemy import text
 from db.session import get_session
 
-async def prune_asset_snapshot(days: int = 90) -> int:
+async def prune_asset_snapshot(days: int = 120) -> int:
     async with get_session() as session:
         res = await session.execute(text(
             "DELETE FROM asset_snapshot WHERE captured_at < now() - (:days || ' days')::interval"

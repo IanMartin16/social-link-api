@@ -7,7 +7,7 @@ from repositories.fear_greed_repo import fetch_fear_greed
 _cache: dict[str, dict] = {}
 _cache_at: dict[str, float] = {}
 _CACHE_TTL_S = 55 * 60              # F&G cambia ~diario → cache largo
-_WINDOWS = {"30d": 30, "all": None}
+_WINDOWS = {"1y": 365, "all": None}
 
 async def get_fear_greed(window: str = "all") -> dict:
     now = time.time()

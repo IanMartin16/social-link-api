@@ -7,6 +7,7 @@ from api.health import router as health_router
 from api.routes.attention import router as attention_router
 from api.routes.insights import router as insights_router
 from api.routes.market_structure import router as market_structure_router
+from api.routes.fear_greed import router as fear_greed_router
 from detector.episodizer import run_episodizer
 from detector.tracker import run_tracker
 from db.session import get_session
@@ -87,6 +88,7 @@ app.include_router(health_router)
 app.include_router(attention_router)
 app.include_router(insights_router)
 app.include_router(market_structure_router)
+app.include_router(fear_greed_router)
 
 app.add_middleware(
     CORSMiddleware,
